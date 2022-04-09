@@ -7,7 +7,7 @@ from Crypto.Random import get_random_bytes
 from Crypto.Cipher import AES, PKCS1_OAEP
 
 
-NAME_BASE = "blockchain.db"
+NAME_BASE = "system.db"
 point_block = 0
 code = "nooneknows"
 
@@ -146,17 +146,16 @@ def main():
     point_block = int(GetNumberBlock()[0][1])
     blockdata = {
         "number": point_block,
-        "from": "testaddress",
-        "to": "test2address",
-        "type": "money",
-        "count": 100
+        "from": "generic",
+        "to": "generic",
+        "type": "generic",
+        "count": 1000000
     }
     bdata = "num: " + str(blockdata['number']) + ", from: " + str(blockdata['from']) + ", to: " + str(blockdata['to']) + ", type: " + str(blockdata['type']) + ", count: " + str(blockdata['count'])
     CreateBlock(bdata) 
     blockinfo = TranslateBlockInfo(DecryptBlock()) 
     print(blockinfo)
 
-    
 
 if __name__ == "__main__":
     main()

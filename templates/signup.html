@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Регистрация</title>
+
+	<!-- Bootstrap core CSS -->
+  <link href="{{ url_for('static', filename='css/bootstrap.css') }}" rel="stylesheet">
+	<meta name="theme-color" content="#7952b3">
+
+    <link href="{{ url_for('static', filename='css/signin.css') }}" rel="stylesheet">
+  </head>
+  <body class="text-center">
+    
+    <main class="form-signin">
+            
+            <form>
+                    <h1 class="h1">Регистрация</h1>
+                    <div class="name">
+                        <input type="text" class="form-control" id="floatingInput" placeholder="Введите ваше имя">
+                    </div>
+
+                    <div class="login">
+                        <input type="login" class="form-control" id="floatingInput" placeholder="Введите логин">
+                        <!-- <label for="floatingInput">Введите логин </label> -->
+                    </div>
+
+                    <div class="password">
+                        <input type="password" class="form-control" id="floatingPassword" placeholder="Придумайте пароль">
+                        <!-- <label for="floatingPassword">Введите пароль</label> -->
+                    </div>
+
+                    <div class="password">
+                        <input type="password" class="form-control" id="floatingPassword" placeholder="Введите повторно пароль">
+                    </div>
+
+                    <button class="registration" type="submit">Зарегистрироваться</button>
+            </form>
+        
+    </main>
+    <script src="{{ url_for('static', filename='js/bootstrap.bundle.js') }}"></script>
+  </body>
+  <div class="error"></div>
+</html>
