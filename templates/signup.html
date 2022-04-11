@@ -15,31 +15,38 @@
     
     <main class="form-signin">
             
-            <form>
+            <form action="" method="post">
                     <h1 class="h1">Регистрация</h1>
+                    {% if message%}
+                    <div class="alert alert-dark" role="alert">
+                      {{message}}
+                    </div>
+                    {% endif %}
                     <div class="name">
-                        <input type="text" class="form-control" id="floatingInput" placeholder="Введите ваше имя">
+                        <input type="text" class="form-control" id="floatingInput" placeholder="Введите ваше имя" name="firstname">
                     </div>
 
                     <div class="login">
-                        <input type="login" class="form-control" id="floatingInput" placeholder="Введите логин">
+                        <input type="login" class="form-control" id="floatingInput" placeholder="Введите логин" name="username">
                         <!-- <label for="floatingInput">Введите логин </label> -->
                     </div>
 
                     <div class="password">
-                        <input type="password" class="form-control" id="floatingPassword" placeholder="Придумайте пароль">
+                        <input type="password" class="form-control" id="floatingPassword" placeholder="Придумайте пароль" name="firstpassword">
                         <!-- <label for="floatingPassword">Введите пароль</label> -->
                     </div>
 
                     <div class="password">
-                        <input type="password" class="form-control" id="floatingPassword" placeholder="Введите повторно пароль">
+                        <input type="password" class="form-control" id="floatingPassword" placeholder="Введите повторно пароль" name="secondpassword">
                     </div>
 
                     <button class="registration" type="submit">Зарегистрироваться</button>
-            </form>
+                    {% if success%}
+                    <a class="entry" href="/">Авторизация</a>
+                    {% endif %}
+                  </form>
         
     </main>
     <script src="{{ url_for('static', filename='js/bootstrap.bundle.js') }}"></script>
   </body>
-  <div class="error"></div>
 </html>

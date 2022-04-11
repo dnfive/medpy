@@ -23,15 +23,19 @@
   <body class="text-center">
     
     <main class="form-signin">
-            <form>
+            <form action="" method="post">
                 <h1 class="h1">Вход в аккаунт</h1>
-
+                    {% if message%}
+                    <div class="alert alert-dark" role="alert">
+                      {{message}}
+                    </div>
+                    {% endif %}
                     <div class="login">
-                        <input type="login" class="form-control" id="floatingInput" placeholder="Введите логин">
+                        <input type="login" class="form-control" id="floatingInput" placeholder="Введите логин" name="login">
 
                     </div>
                     <div class="password">
-                        <input type="password" class="form-control" id="floatingPassword" placeholder="Введите пароль">
+                        <input type="password" class="form-control" id="floatingPassword" placeholder="Введите пароль" name="password">
                     </div>
 
                     <div class="checkbox mb-3">
@@ -40,7 +44,7 @@
                         </label>
                     </div>
                     <button class="entry" type="submit">Вход</button>
-                    <button class="registration" type="submit">Регистрация</button>
+                    <a class="registration" href="/signup">Регистрация</button>
             </form>
         </div>
     </main>

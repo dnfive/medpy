@@ -9,6 +9,7 @@ from Crypto.Cipher import AES, PKCS1_OAEP
 
 NAME_BASE = "system.db"
 point_block = 0
+account_id = 0
 code = "nooneknows"
 
 def TranslateBlockInfo(bdata):
@@ -133,6 +134,114 @@ def GetNumberBlock():
         news = cursor.fetchall()
         return news
 
+    except sqlite3.Error as error:
+        print("Ошибка при загрузке номера блока SQLite: ", error)
+    finally:
+        if (db_connect):
+            db_connect.close()
+
+def CreateAccountsBase():
+    try:
+        db_connect = sqlite3.connect(NAME_BASE)
+        cursor = db_connect.cursor()
+        create_query = '''CREATE TABLE accounts (
+                        name TEXT,
+                        login TEXT, 
+                        password INTEGER,
+                        ID INTEGER)
+        '''
+        cursor.execute(create_query)
+        db_connect.commit()
+        print("Таблица с данными пользователей создана!")
+    except sqlite3.Error as error:
+        print("Ошибка при создании таблицы аккаунтов SQLite: ", error)
+    finally:
+        if (db_connect):
+            db_connect.close()   
+
+def GetAccountInfo(login):
+    try:
+        db_connect = sqlite3.connect(NAME_BASE)
+        cursor = db_connect.cursor()
+        db_query = ''' SELECT * FROM accounts
+                    WHERE login = ?
+        '''
+        cursor.execute(db_query, [(login)])
+        AccountInfo = cursor.fetchall()
+        return AccountInfo
+
+    except sqlite3.Error as error:
+        print("Ошибка при загрузке аккаунта SQLite: ", error)
+    finally:
+        if (db_connect):
+            db_connect.close()
+
+#def UpdateAccountInfo():
+ #   global point_block
+  #  try:
+   #     db_connect = sqlite3.connect(NAME_BASE)
+    #    cursor = db_connect.cursor()
+     #   news_query = '''UPDATE accounts
+      #              SET value = ? 
+  #                  WHERE name = ?
+  #      '''
+  #      cursor.execute(news_query, (point_block, "point_block"))
+  #      db_connect.commit()
+  #  except sqlite3.Error as error:
+  #      print("Ошибка при обновлении номера блока SQLite: ", error)
+  #  finally:
+  #      if (db_connect):
+  #          db_connect.close()  
+
+def CreateAccount(AccountInfo):
+    global account_id
+    GetAccountID()
+    account = (AccountInfo['name'], AccountInfo['login'], AccountInfo['password'], account_id)
+    try:
+        db_connect = sqlite3.connect(NAME_BASE)
+        cursor = db_connect.cursor()
+        account_query = ''' INSERT INTO accounts(name, login, password, ID)
+                            VALUES (?, ?, ?, ?)
+        '''
+        cursor.execute(account_query, account)
+        db_connect.commit()
+        account_id += 1
+        UpdateAccountID()
+    except sqlite3.Error as error:
+        print("Ошибка при создании аккаунта SQLite: ", error)
+    finally:
+        if(db_connect):
+            db_connect.close()
+
+def UpdateAccountID():
+    global account_id
+    try:
+        db_connect = sqlite3.connect(NAME_BASE)
+        cursor = db_connect.cursor()
+        news_query = '''UPDATE system
+                    SET value = ? 
+                    WHERE name = ?
+        '''
+        cursor.execute(news_query, (account_id, "account_id"))
+        db_connect.commit()
+    except sqlite3.Error as error:
+        print("Ошибка при обновлении номера аккаунта SQLite: ", error)
+    finally:
+        if (db_connect):
+            db_connect.close()  
+
+def GetAccountID():
+    global account_id
+    try:
+        db_connect = sqlite3.connect(NAME_BASE)
+        cursor = db_connect.cursor()
+        db_query = ''' SELECT * FROM system
+                    WHERE name = ?
+        '''
+        cursor.execute(db_query, [("account_id")])
+        info = cursor.fetchall()
+        account_id = int(info[0][1])
+        print('[DEBUG] Номер аккаунта обновлён! ID - ', account_id)
     except sqlite3.Error as error:
         print("Ошибка при загрузке номера блока SQLite: ", error)
     finally:
