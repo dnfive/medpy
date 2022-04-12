@@ -6,7 +6,7 @@
 	<title>Регистрация</title>
 
 	<!-- Bootstrap core CSS -->
-  <link href="{{ url_for('static', filename='css/bootstrap.css') }}" rel="stylesheet">
+  <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
 	<meta name="theme-color" content="#7952b3">
 
     <link href="{{ url_for('static', filename='css/signin.css') }}" rel="stylesheet">
@@ -41,12 +41,12 @@
                     </div>
 
                     <button class="registration" type="submit">Зарегистрироваться</button>
-                    {% if success%}
-                    <a class="entry" href="/">Авторизация</a>
-                    {% endif %}
                   </form>
+                  {% if success%}
+                    <button class="entry" type="submit" onclick="window.location.href='/'">Авторизация</button>
+                  {% endif %}
         
     </main>
-    <script src="{{ url_for('static', filename='js/bootstrap.bundle.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
   </body>
 </html>

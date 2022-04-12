@@ -195,8 +195,9 @@ def GetAccountInfo(login):
 
 def CreateAccount(AccountInfo):
     global account_id
+    global point_block
     GetAccountID()
-    account = (AccountInfo['name'], AccountInfo['login'], AccountInfo['password'], account_id)
+    account = (AccountInfo['name'], AccountInfo['login'], GetHashString(AccountInfo['password']), account_id)
     try:
         db_connect = sqlite3.connect(NAME_BASE)
         cursor = db_connect.cursor()
@@ -207,6 +208,18 @@ def CreateAccount(AccountInfo):
         db_connect.commit()
         account_id += 1
         UpdateAccountID()
+        binfo = "Account ID: " + str(account_id-1) + ". Login: " + str(AccountInfo['login']) + ". Password: " + str(GetHashString(AccountInfo['password']))
+        print(binfo)
+        blockdata = {
+        "number": point_block,
+        "from": AccountInfo['login'],
+        "to": AccountInfo['login'],
+        "type": "createaccount",
+        "count": 0,
+        "info": str(binfo)
+        }
+        bdata = "num: " + str(blockdata['number']) + ", from: " + str(blockdata['from']) + ", to: " + str(blockdata['to']) + ", type: " + str(blockdata['type']) + ", count: " + str(blockdata['count']) + ", info: " + str(blockdata['info'])
+        CreateBlock(bdata)
     except sqlite3.Error as error:
         print("Ошибка при создании аккаунта SQLite: ", error)
     finally:
@@ -258,12 +271,13 @@ def main():
         "from": "generic",
         "to": "generic",
         "type": "generic",
-        "count": 1000000
+        "count": 1000000,
+        "info": "generic block"
     }
-    bdata = "num: " + str(blockdata['number']) + ", from: " + str(blockdata['from']) + ", to: " + str(blockdata['to']) + ", type: " + str(blockdata['type']) + ", count: " + str(blockdata['count'])
+    bdata = "num: " + str(blockdata['number']) + ", from: " + str(blockdata['from']) + ", to: " + str(blockdata['to']) + ", type: " + str(blockdata['type']) + ", count: " + str(blockdata['count']) + ", info: " + str(blockdata['info'])
     CreateBlock(bdata) 
-    blockinfo = TranslateBlockInfo(DecryptBlock()) 
-    print(blockinfo)
+    #blockinfo = TranslateBlockInfo(DecryptBlock()) 
+    print(DecryptBlock())
 
 
 if __name__ == "__main__":

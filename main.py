@@ -15,7 +15,8 @@ def index():
         if len(account) == 0:
             message = 'Аккаунта с таким логином не существует!'
         else:
-            password_2 = account[0][2]
+            password_2 = str(account[0][2])
+            password = GetHashString(password)
             if password == password_2:
                 message = 'Вы успешно авторизовались!'
             else:
