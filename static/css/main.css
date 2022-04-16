@@ -1,0 +1,70 @@
+*{ 
+    margin: 0;
+    padding: 0;
+}
+
+body{
+    width: 100vw;
+}
+
+.box1{
+    display: block;
+    border:5px solid rgb(60, 0, 255) ;
+    border-radius: 20px;
+    height: 75vh;
+    width: 40vw;
+    margin: 0 auto;
+    text-align: center;
+    margin-top: 15vh;
+    min-width: 360px;
+    background-color: #82ABED;}
+
+.img1{
+    padding-left: 80%;
+    padding-top: 5%;
+    width: 4vw;
+    height: 10vh;
+}
+
+.h{
+    margin-top:5%;
+    margin-bottom: 2vh;
+}
+
+.surnam{
+    padding:1vw;
+    font-size: 2vh;
+}
+
+.weight{
+    font-weight:900;
+
+}
+
+.font{
+    font-family: 'Courier New', Courier, monospace;
+}
+
+.histori{
+    
+    padding-top: 1vh;
+    font-size: 2vh;
+    height: 49%;
+}
+
+.box2{
+    display: block;
+    margin: 0 auto;
+    width: 50vh;
+    height: auto;
+    overflow: auto;
+    height: 18vh;
+    font-family: 'Courier New', Courier, monospace;
+    margin-bottom: 8vw;    
+
+}
+.havent{
+    display: block;
+    margin-top: 40%;
+    font-size: 5vh;
+}

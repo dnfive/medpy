@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <title>Document</title>
+</head>
+<body>
+    <div class="box1">
+        <!-- <img class="img1" src="{{ url_for('static', filename='img1.png') }}" alt=""> -->
+        {% if have_card %}
+        <h1 class="h">Данные пациента</h1>
+            <div class="surnam">
+                <label class="weight" for="surname">Фамилия :</label> <label class="font">{{ second_name }}</label>
+            </div>
+
+            <div class="surnam">
+                <label class="weight" for="surname">Имя :</label> <label class="font">{{ first_name }}</label>
+            </div>
+
+            <div class="surnam">
+                <label class="weight" for="surname">Отчество :</label> <label class="font">{{ third_name }}</label>
+            </div>
+
+            <div class="surnam">
+                <label class="weight" for="surname">Дата Рождения :</label> <label class="font">{{ birthdate }}</label>
+            </div>
+
+            <div class="surnam">
+                <label class="weight" for="surname">IP медицинской карты :</label> <label class="font">{{ medid }}</label>
+            </div>
+
+            <div class="histori">
+                <label class="weight" for="surname">История болезни :</label> 
+                <br><br>
+                <lable class="box2">
+                    {% if history != 'None'%}
+                    {{ history }}
+                    {% else %}
+                    История болезни пуста!
+                    {% endif %}
+                </lable>
+            </div>
+        {% else%}
+            <div class="havent">У вас нет медицинской карты!</div>
+            <p>{{message}}</p>
+        {% endif %}
+    </div>
+</body>
+</html>

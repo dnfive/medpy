@@ -1,9 +1,12 @@
-from selectors import EpollSelector
+from fcntl import F_SEAL_SEAL
 from db import *
-from flask import Flask, request
+from flask import Flask, request, session, redirect, url_for
 from flask import render_template
 
 app = Flask(__name__)
+
+app.secret_key = 'BAD_SECRET_KEY'
+
 @app.route("/", methods=['post', 'get'])
 def index():
     message = ''
@@ -19,6 +22,15 @@ def index():
             password = GetHashString(password)
             if password == password_2:
                 message = 'Вы успешно авторизовались!'
+                session['user'] = {
+                    'ID': int(account[0][3]),
+                    'name': str(account[0][0]),
+                    'login': str(account[0][1]),
+                    'password': str(account[0][2]),
+                    'type': int(account[0][4]),
+                    'medid': int(account[0][5])
+                }
+                return redirect(url_for('mainwindow'))
             else:
                 message = "Неверный пароль!"
     return render_template("signin.html", message=message)
@@ -41,13 +53,40 @@ def signup():
             else:
                 AccountInfo = {'name': first_name,
                                 'login': username,
-                                'password': password}
+                                'password': password,
+                                'type': 0}
                 CreateAccount(AccountInfo)
                 message = 'Аккаунт успещно создан!'
                 success = 'Yes'
 
     print(message)
     return render_template("signup.html", message=message, success=success)
+
+@app.route("/main")
+def mainwindow():
+    CardInfo = GetCardInfo(session['user']['medid'])
+    if CardInfo == False:
+        have_card = ""
+        message = ""
+        return render_template("main.html", message = message, 
+                                        have_card=have_card)
+    else:
+        first_name = CardInfo['first_name']
+        second_name = CardInfo['second_name']
+        third_name = CardInfo['third_name']
+        birthdate = CardInfo['birthdate']
+        medid = CardInfo['ID']
+        history = CardInfo['history']
+        have_card = "Yes"
+        message = ""
+        return render_template("main.html", message = message, 
+                                        have_card=have_card,
+                                        first_name=first_name,
+                                        second_name=second_name,
+                                        third_name=third_name,
+                                        birthdate=birthdate,
+                                        medid=medid,
+                                        history=history)
 
 if __name__ == "__main__":
     app.run(debug=True)
