@@ -57,7 +57,7 @@ def signup():
                 AccountInfo = {'name': first_name,
                                 'login': username,
                                 'password': password,
-                                'type': 0}
+                                'type': 1}
                 CreateAccount(AccountInfo)
                 message = 'Аккаунт успещно создан!'
                 success = 'Yes'
@@ -70,7 +70,7 @@ def mainwindow():
     CardInfo = GetCardInfo(session['user']['medid'])
     if CardInfo == False:
         have_card = ""
-        message = ""
+        message = "Ваш ID - " + str(session['user']['ID'])
         return render_template("main.html", message = message, 
                                         have_card=have_card)
     else:
@@ -204,6 +204,8 @@ def edit():
         if CardInfo == False:
             message = 'Медкарта не найдена!'
         else:
+            if CardInfo['history'] == "Пусто":
+                CardInfo['history'] = ""
             CardInfo['history'] += ".\n" + str(datetime.now().strftime("%d. %m %Y")) + " .\n " + str(history)
             history = datetime.now().strftime("%d. %m %Y") + ". \n" + history
             UpdateHistoryMed(CardInfo['ID'], CardInfo['history'], history)
