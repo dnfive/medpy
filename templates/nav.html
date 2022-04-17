@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/nav.css') }}">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        console.log("Hello world!")
+    </script>
+    <div class="box">
+        <img class="img1" src="{{ url_for('static', filename='img1.png') }}" alt="">
+        <h1 class="h">Навигация по базе данных</h1>
+        <input class="create" type="button" onclick="window.location.href='/'" value="Создать медицинскую карту">
+        <br>
+        <input class="history" type="button" onclick="window.location.href='/'" value="История болезней">
+        <br>
+        <input class="text" type="button" onclick="window.location.href='/'" value="Добавить данные пациента">
+        <br>
+    </div>
+</body>
+</html>

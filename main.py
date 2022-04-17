@@ -88,5 +88,9 @@ def mainwindow():
                                         medid=medid,
                                         history=history)
 
+@app.route("/nav")
+def nav():
+    return render_template("nav.html")
+
 if __name__ == "__main__":
     app.run(debug=True)

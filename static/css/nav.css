@@ -1,0 +1,52 @@
+*{ 
+    margin: 0;
+    padding: 0;
+}
+
+body{
+    width: 100vw;
+}
+
+.box{
+    display: block;
+    border:5px solid rgb(60, 0, 255) ;
+    border-radius: 20px;
+    height: 70vh;
+    width: 40vw;
+    margin: 0 auto;
+    text-align: center;
+    margin-top: 15vh;
+    min-width: 360px;
+    background-color: #82ABED;}
+
+.img1{
+    float: right;
+    padding-top: 5%;
+}
+
+.h{
+    margin-top: 5%;
+}
+
+.create {
+    margin-top: 5%;
+    width: 35vw;
+    height: 10vh; 
+    border-radius:20px;
+    min-width: 360px;
+    font-size: 20px;
+    font-style: oblique;
+    background-color:blue;
+}
+
+.history,.text{
+    margin-top: 10%;
+    width: 35vw;
+    height: 10vh;
+    border-radius:20px;
+    min-width: 360px;
+    font-size: 20px;
+    font-style: oblique;
+    background-color:blue;
+}
+
