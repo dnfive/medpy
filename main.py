@@ -128,7 +128,7 @@ def create():
             'second_name': second_name,
             'third_name': third_name,
             'birthdate': birthdate,
-            'history': ""
+            'history': "Пусто"
         }
         account = GetAccountInfo(None, ID_user)
         print(account)
@@ -136,12 +136,6 @@ def create():
         print("Медкарта добавлена пользователю - " + str(account[0][3]) + ". ID медкарты - " + str(medcard_id))
         CreateMedCard(CardInfo)
         message = "Медкарта успешно создана!"
-        #str(CardInfo['created_date']),
-            #str(CardInfo['first_name']),
-            #str(CardInfo['second_name']),
-            #str(CardInfo['third_name']),
-            #str(CardInfo['birthdate']),
-            #str(CardInfo['history']))
         return render_template("create.html", message=message,
                                             first_name=first_name,
                                             second_name=second_name,
@@ -149,6 +143,40 @@ def create():
                                             birthdate=birthdate,
                                             id_user=ID_user)
     return render_template("create.html", message=message)
+
+@app.route("/search", methods=['post', 'get'])
+def search():
+    message = ""
+    history = ""
+    first_name = ""
+    second_name = ""
+    third_name = ""
+    if request.method == "POST":
+        first_name = request.form.get("first_name")
+        second_name = request.form.get("second_name")
+        third_name = request.form.get("third_name")
+        if len(second_name) == 0:
+            message = 'Введите фамилию пациента!'
+            return render_template("search.html", message=message, history=history)
+        elif len(first_name) == 0:
+            message = 'Введите имя пациента!'
+            return render_template("search.html", message=message, history=history)
+        elif len(third_name) == 0:
+            message = 'Введите отчество пациента!'
+            return render_template("search.html", message=message, history=history)
+        
+        CardInfo = GetCardInfo(None, str(first_name), str(second_name), str(third_name))
+        print(CardInfo)
+        if CardInfo == False:
+            message = 'Медкарта не найдена!'    
+        else:
+            history = str(CardInfo['history'])
+    
+    return render_template("search.html", message=message, 
+                                            history=history,
+                                            first_name=first_name,
+                                            second_name=second_name,
+                                            third_name=third_name)
 
 if __name__ == "__main__":
     app.run(debug=True)

@@ -374,33 +374,63 @@ def GetMedID():
         if (db_connect):
             db_connect.close()
 
-def GetCardInfo(id):
-    try:
-        db_connect = sqlite3.connect(NAME_BASE)
-        cursor = db_connect.cursor()
-        db_query = ''' SELECT * FROM medcards
-                    WHERE ID = ?
-        '''
-        cursor.execute(db_query, [(id)])
-        info = cursor.fetchall()
-        if len(info) != 0:
-            CardInfo = {
-                'ID': id,
-                'created_date': str(info[0][1]),
-                'first_name': str(info[0][2]),
-                'second_name': str(info[0][3]),
-                'third_name': str(info[0][4]),
-                'birthdate': str(info[0][5]),
-                'history': str(info[0][6])
-            }
-            return CardInfo
-        else:
-            return False
-    except sqlite3.Error as error:
-        print("Ошибка при загрузке аккаунта SQLite: ", error)
-    finally:
-        if (db_connect):
-            db_connect.close()
+def GetCardInfo(id=None, first_name=None, second_name=None, third_name=None):
+    if id is not None and first_name is None and second_name is None and third_name is None:
+        try:
+            db_connect = sqlite3.connect(NAME_BASE)
+            cursor = db_connect.cursor()
+            db_query = ''' SELECT * FROM medcards
+                        WHERE ID = ?
+            '''
+            cursor.execute(db_query, [(id)])
+            info = cursor.fetchall()
+            if len(info) != 0:
+                CardInfo = {
+                    'ID': id,
+                    'created_date': str(info[0][1]),
+                    'first_name': str(info[0][2]),
+                    'second_name': str(info[0][3]),
+                    'third_name': str(info[0][4]),
+                    'birthdate': str(info[0][5]),
+                    'history': str(info[0][6])
+                }
+                return CardInfo
+            else:
+                return False
+        except sqlite3.Error as error:
+            print("Ошибка при загрузке медкарты SQLite: ", error)
+        finally:
+            if (db_connect):
+                db_connect.close()
+    if id is None and first_name is not None and second_name is not None and third_name is not None:
+        try:
+            db_connect = sqlite3.connect(NAME_BASE)
+            cursor = db_connect.cursor()
+            db_query = ''' SELECT * FROM medcards
+                        WHERE first_name = ? and second_name = ? and third_name = ?
+            '''
+            cursor.execute(db_query, [first_name, second_name, third_name])
+            info = cursor.fetchone()
+            print("[DEBUG] " + str(info))
+            if info != None:
+                CardInfo = {
+                    'ID': id,
+                    'created_date': str(info[1]),
+                    'first_name': str(info[2]),
+                    'second_name': str(info[3]),
+                    'third_name': str(info[4]),
+                    'birthdate': str(info[5]),
+                    'history': str(info[6])
+                }
+                return CardInfo
+            else:
+                return False
+        except sqlite3.Error as error:
+            print("Ошибка при загрузке медкарты SQLite: ", error)
+        finally:
+            if (db_connect):
+                db_connect.close()
+
 
 def main():
     #CreateSystemBase()
