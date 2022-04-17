@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/create.css') }}">
+    <title>Document</title>
+</head>
+<body>
+    <div class="box1">
+        <img class="img1" src="{{ url_for('static', filename='img1.png') }}" alt="">
+        <h1 class="h">Создать медкарту</h1>
+        <div class="container">
+            {% if message %}
+            <h6>{{ message }}</h6>
+            {% endif %}
+            <form action="/create" method="post">
+                <div class="surnam">
+                    <label class="weight" for="surname">Фамилия :</label>
+                    <input type="text" placeholder="Иванов" value="{% if second_name %}{{ second_name }}{% endif %}" name="second_name"> 
+                </div>
+
+                <div class="surnam">
+                    <label class="weight" for="surname">Имя :</label>
+                    <input type="text" placeholder="Иван" value="{% if first_name %}{{ first_name }}{% endif %}" name="first_name"> 
+                </div>
+
+                <div class="surnam">
+                    <label class="weight" for="surname">Отчество :</label>
+                    <input type="text" placeholder="Иванович" value="{% if third_name %}{{ third_name }}{% endif %}" name="third_name"> 
+                </div>
+
+                <div class="surnam">
+                    <label class="weight" for="surname">Дата Рождения :</label>
+                    <input type="text" placeholder="14.06.2001" value="{% if birthdate %}{{ birthdate }}{% endif %}" name="birthdate"> 
+                </div>
+                <div class="surnam">
+                    <label class="weight" for="surname">ID пользователя :</label>
+                    <input type="number" placeholder="0" value="{% if id_user %}{{ id_user }}{% endif %}" name="id_user"> 
+                </div>
+                <button class="entry" type="submit">Создать</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

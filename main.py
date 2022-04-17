@@ -1,7 +1,7 @@
-from fcntl import F_SEAL_SEAL
 from db import *
 from flask import Flask, request, session, redirect, url_for
 from flask import render_template
+from datetime import datetime, date, time
 
 app = Flask(__name__)
 
@@ -30,7 +30,10 @@ def index():
                     'type': int(account[0][4]),
                     'medid': int(account[0][5])
                 }
-                return redirect(url_for('mainwindow'))
+                if account[0][4] == 1: # Если обычный пользователь
+                    return redirect(url_for('mainwindow'))
+                else:
+                    return redirect(url_for("nav"))
             else:
                 message = "Неверный пароль!"
     return render_template("signin.html", message=message)
@@ -91,6 +94,61 @@ def mainwindow():
 @app.route("/nav")
 def nav():
     return render_template("nav.html")
+
+@app.route("/create", methods=['post', 'get'])
+def create():
+    global medcard_id
+    medcard_id = int(GetMedID()[0][1])
+    message = ''
+    if request.method == "POST":
+        first_name = request.form.get("first_name")
+        second_name = request.form.get('second_name')
+        third_name = request.form.get('third_name')
+        ID_user = request.form.get('id_user')
+        birthdate = request.form.get('birthdate')
+        if len(second_name) == 0:
+            message = 'Введите фамилию пациента!'
+        elif len(first_name) == 0:
+            message = 'Введите имя пациента!'
+        elif len(third_name) == 0:
+            message = 'Введите отчество пациента!'
+        elif len(birthdate) == 0:
+            message = 'Введите дату рождения пациента!'
+        elif len(ID_user) == 0:
+            message = 'Введите ID пациента!'
+        elif len(GetAccountInfo(ID_user)) == 0:
+            message = "Пользователь с таким ID не найден"
+
+        cdate = datetime.now()
+        cdate = cdate.strftime("%d. %m %Y")
+        print(cdate)
+        CardInfo = {
+            'created_date': cdate,
+            'first_name': first_name,
+            'second_name': second_name,
+            'third_name': third_name,
+            'birthdate': birthdate,
+            'history': ""
+        }
+        account = GetAccountInfo(None, ID_user)
+        print(account)
+        UpdateAccountInfo(account[0][3], medcard_id)
+        print("Медкарта добавлена пользователю - " + str(account[0][3]) + ". ID медкарты - " + str(medcard_id))
+        CreateMedCard(CardInfo)
+        message = "Медкарта успешно создана!"
+        #str(CardInfo['created_date']),
+            #str(CardInfo['first_name']),
+            #str(CardInfo['second_name']),
+            #str(CardInfo['third_name']),
+            #str(CardInfo['birthdate']),
+            #str(CardInfo['history']))
+        return render_template("create.html", message=message,
+                                            first_name=first_name,
+                                            second_name=second_name,
+                                            third_name=third_name,
+                                            birthdate=birthdate,
+                                            id_user=ID_user)
+    return render_template("create.html", message=message)
 
 if __name__ == "__main__":
     app.run(debug=True)

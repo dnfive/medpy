@@ -1,11 +1,8 @@
-from re import M
-from selectors import EpollSelector
 import sqlite3
 import hashlib
 from Crypto.PublicKey import RSA
 from Crypto.Random import get_random_bytes
 from Crypto.Cipher import AES, PKCS1_OAEP
-
 
 NAME_BASE = "system.db"
 point_block = 0
@@ -24,10 +21,9 @@ def TranslateBlockInfo(bdata):
         iblock[blockinfo[i][0]] = blockinfo[i][1]
     return iblock
 
-def DecryptBlock():
-    global point_block
+def DecryptBlock(block):
     global code
-    name = "block_" + str(point_block-1) + ".bin"
+    name = "block_" + str(block) + ".bin"
     with open(name, "rb") as fobj:
         private_key = RSA.import_key(
             open("private_key.bin").read(),
@@ -46,6 +42,7 @@ def DecryptBlock():
 
 def AddBlock(crsa, ctext, tag, caes):
     global point_block
+    point_block = int(GetNumberBlock()[0][1])
     name = "block_" + str(point_block) + ".bin"
     with open(name, "wb") as f:
         f.write(crsa)
@@ -161,39 +158,57 @@ def CreateAccountsBase():
         if (db_connect):
             db_connect.close()   
 
-def GetAccountInfo(login):
-    try:
-        db_connect = sqlite3.connect(NAME_BASE)
-        cursor = db_connect.cursor()
-        db_query = ''' SELECT * FROM accounts
-                    WHERE login = ?
-        '''
-        cursor.execute(db_query, [(login)])
-        AccountInfo = cursor.fetchall()
-        return AccountInfo
+def GetAccountInfo(login=None, id=None):
+    if login is not None:
+        try:
+            print("Проверка логина")
+            db_connect = sqlite3.connect(NAME_BASE)
+            cursor = db_connect.cursor()
+            db_query = ''' SELECT * FROM accounts
+                        WHERE login = ?
+            '''
+            cursor.execute(db_query, [(login)])
+            AccountInfo = cursor.fetchall()
+            return AccountInfo
 
-    except sqlite3.Error as error:
-        print("Ошибка при загрузке аккаунта SQLite: ", error)
-    finally:
-        if (db_connect):
-            db_connect.close()
+        except sqlite3.Error as error:
+            print("Ошибка при загрузке аккаунта SQLite: ", error)
+        finally:
+            if (db_connect):
+                db_connect.close()
+    elif id is not None:
+        try:
+            print("Поиск по паролю")
+            db_connect = sqlite3.connect(NAME_BASE)
+            cursor = db_connect.cursor()
+            db_query = ''' SELECT * FROM accounts
+                        WHERE ID = ?
+            '''
+            cursor.execute(db_query, [(id)])
+            AccountInfo = cursor.fetchall()
+            return AccountInfo
 
-#def UpdateAccountInfo():
- #   global point_block
-  #  try:
-   #     db_connect = sqlite3.connect(NAME_BASE)
-    #    cursor = db_connect.cursor()
-     #   news_query = '''UPDATE accounts
-      #              SET value = ? 
-  #                  WHERE name = ?
-  #      '''
-  #      cursor.execute(news_query, (point_block, "point_block"))
-  #      db_connect.commit()
-  #  except sqlite3.Error as error:
-  #      print("Ошибка при обновлении номера блока SQLite: ", error)
-  #  finally:
-  #      if (db_connect):
-  #          db_connect.close()  
+        except sqlite3.Error as error:
+            print("Ошибка при загрузке аккаунта SQLite: ", error)
+        finally:
+            if (db_connect):
+                db_connect.close()
+def UpdateAccountInfo(id, medid=None):
+    if medid is not None:
+        try:
+            db_connect = sqlite3.connect(NAME_BASE)
+            cursor = db_connect.cursor()
+            news_query = '''UPDATE accounts
+                        SET medid = ? 
+                        WHERE ID = ?
+            '''
+            cursor.execute(news_query, (medid, id))
+            db_connect.commit()
+        except sqlite3.Error as error:
+            print("Ошибка при обновлении номера блока SQLite: ", error)
+        finally:
+            if (db_connect):
+                db_connect.close()  
 
 def CreateAccount(AccountInfo):
     global account_id
@@ -287,6 +302,7 @@ def CreateMedBase():
 
 def CreateMedCard(CardInfo):
     global medcard_id
+    medcard_id = int(GetMedID()[0][1])
     card = (medcard_id,
             str(CardInfo['created_date']),
             str(CardInfo['first_name']),
@@ -297,7 +313,7 @@ def CreateMedCard(CardInfo):
     try:
         db_connect = sqlite3.connect(NAME_BASE)
         cursor = db_connect.cursor()
-        account_query = ''' INSERT INTO accounts(ID, created_date, first_name, second_name, third_name, birthdate, history)
+        account_query = ''' INSERT INTO medcards(ID, created_date, first_name, second_name, third_name, birthdate, history)
                             VALUES (?, ?, ?, ?, ?, ?, ?)
         '''
         cursor.execute(account_query, card)
@@ -350,7 +366,7 @@ def GetMedID():
         '''
         cursor.execute(db_query, [("medcard_id")])
         info = cursor.fetchall()
-        medcard_id = int(info[0][1])
+        return info
         print('[DEBUG] Номер медкарты обновлён! ID - ', medcard_id)
     except sqlite3.Error as error:
         print("Ошибка при загрузке номера блока SQLite: ", error)
@@ -389,20 +405,20 @@ def GetCardInfo(id):
 def main():
     #CreateSystemBase()
     #CreateKeys()
-    #global point_block
-    #point_block = int(GetNumberBlock()[0][1])
-    #blockdata = {
-    #    "number": point_block,
-    #    "from": "generic",
-    #    "to": "generic",
-    #    "type": "generic",
-    #    "count": 1000000,
-    #    "info": "generic block"
-    #}
-    #bdata = "num: " + str(blockdata['number']) + ", from: " + str(blockdata['from']) + ", to: " + str(blockdata['to']) + ", type: " + str(blockdata['type']) + ", count: " + str(blockdata['count']) + ", info: " + str(blockdata['info'])
-    #CreateBlock(bdata) 
+    global point_block
+    point_block = int(GetNumberBlock()[0][1])
+    blockdata = {
+        "number": point_block,
+        "from": "generic",
+        "to": "generic",
+        "type": "generic",
+        "count": 1000000,
+        "info": "generic block"
+    }
+    bdata = "num: " + str(blockdata['number']) + ", from: " + str(blockdata['from']) + ", to: " + str(blockdata['to']) + ", type: " + str(blockdata['type']) + ", count: " + str(blockdata['count']) + ", info: " + str(blockdata['info'])
+    CreateBlock(bdata) 
     #blockinfo = TranslateBlockInfo(DecryptBlock()) 
-    #print(DecryptBlock())
+    print(DecryptBlock(0))
     #CreateMedBase()
     pass
 
