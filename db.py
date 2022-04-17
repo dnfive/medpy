@@ -226,7 +226,7 @@ def CreateAccount(AccountInfo):
         db_connect.commit()
         account_id += 1
         UpdateAccountID()
-        binfo = "Account ID: " + str(account_id-1) + ". Login: " + str(AccountInfo['login']) + ". Password: " + str(GetHashString(AccountInfo['password']))
+        binfo = "Account ID - " + str(account_id-1) + ". Login - " + str(AccountInfo['login']) + ". Password - " + str(GetHashString(AccountInfo['password']))
         print(binfo)
         blockdata = {
         "number": point_block,
@@ -234,9 +234,10 @@ def CreateAccount(AccountInfo):
         "to": AccountInfo['login'],
         "type": "createaccount",
         "count": 0,
-        "info": str(binfo)
+        "info": str(binfo),
+        'prev_hash': GetHashString(str(DecryptBlock(point_block-1)))
         }
-        bdata = "num: " + str(blockdata['number']) + ", from: " + str(blockdata['from']) + ", to: " + str(blockdata['to']) + ", type: " + str(blockdata['type']) + ", count: " + str(blockdata['count']) + ", info: " + str(blockdata['info'])
+        bdata = "num: " + str(blockdata['number']) + ", from: " + str(blockdata['from']) + ", to: " + str(blockdata['to']) + ", type: " + str(blockdata['type']) + ", count: " + str(blockdata['count']) + ", info: " + str(blockdata['info']) + ", prev_hash: " + str(blockdata['prev_hash'])
         CreateBlock(bdata)
     except sqlite3.Error as error:
         print("Ошибка при создании аккаунта SQLite: ", error)
@@ -323,7 +324,7 @@ def CreateMedCard(CardInfo):
         db_connect.commit()
         medcard_id += 1
         UpdateMedID()
-        binfo = "Med ID: " + str(medcard_id-1) + ". CreatedDate: " + str(CardInfo['created_date']) + ". FirstName: " + str(CardInfo['first_name'] + ". SecondName: " + str(CardInfo['second_name']) + ". ThirdName: " + str(CardInfo['third_name']) + ". Birthdate: " + str(CardInfo['birthdate']))
+        binfo = "Med ID - " + str(medcard_id-1) + ". CreatedDate - " + str(CardInfo['created_date']) + ". FirstName - " + str(CardInfo['first_name'] + ". SecondName - " + str(CardInfo['second_name']) + ". ThirdName - " + str(CardInfo['third_name']) + ". Birthdate - " + str(CardInfo['birthdate']))
         print(binfo)
         blockdata = {
         "number": point_block,
@@ -331,9 +332,10 @@ def CreateMedCard(CardInfo):
         "to": str(medcard_id-1),
         "type": "createmedcard",
         "count": 0,
-        "info": str(binfo)
+        "info": str(binfo),
+        'prev_hash': GetHashString(str(DecryptBlock(point_block-1)))
         }
-        bdata = "num: " + str(blockdata['number']) + ", from: " + str(blockdata['from']) + ", to: " + str(blockdata['to']) + ", type: " + str(blockdata['type']) + ", count: " + str(blockdata['count']) + ", info: " + str(blockdata['info'])
+        bdata = "num: " + str(blockdata['number']) + ", from: " + str(blockdata['from']) + ", to: " + str(blockdata['to']) + ", type: " + str(blockdata['type']) + ", count: " + str(blockdata['count']) + ", info: " + str(blockdata['info']) + "prev_hash: " + str(blockdata['prev_hash'])
         CreateBlock(bdata)
     except sqlite3.Error as error:
         print("Ошибка при создании медкарточки SQLite: ", error)
@@ -353,16 +355,17 @@ def UpdateHistoryMed(id, history, new_history):
         '''
         cursor.execute(news_query, (str(history), id))
         db_connect.commit()
-        binfo = "Med ID: " + str(id) + ". New history ivent: " + str(new_history)
+        binfo = "Med ID - " + str(id) + ". New history ivent - " + str(new_history)
         blockdata = {
         "number": point_block,
         "from": str(id),
         "to": str(id),
         "type": "updatehistory",
         "count": 0,
-        "info": str(binfo)
+        "info": str(binfo),
+        'prev_hash': GetHashString(str(DecryptBlock(point_block-1)))
         }
-        bdata = "num: " + str(blockdata['number']) + ", from: " + str(blockdata['from']) + ", to: " + str(blockdata['to']) + ", type: " + str(blockdata['type']) + ", count: " + str(blockdata['count']) + ", info: " + str(blockdata['info'])
+        bdata = "num: " + str(blockdata['number']) + ", from: " + str(blockdata['from']) + ", to: " + str(blockdata['to']) + ", type: " + str(blockdata['type']) + ", count: " + str(blockdata['count']) + ", info: " + str(blockdata['info']) + ", prev_hash: " + str(blockdata['prev_hash'])
         CreateBlock(bdata)
     except sqlite3.Error as error:
         print("Ошибка при обновлении истории медкарты SQLite: ", error)
@@ -462,6 +465,18 @@ def GetCardInfo(id=None, first_name=None, second_name=None, third_name=None):
             if (db_connect):
                 db_connect.close()
 
+def TestingBlockChain():
+    global point_block
+    point_block = int(GetNumberBlock()[0][1])
+    for i in range(1, point_block-1):
+        block = TranslateBlockInfo( DecryptBlock(i) )
+        bdata = "num: " + str(block['num']) + ", from: " + str(block['from']) + ", to: " + str(block['to']) + ", type: " + str(block['type']) + ", count: " + str(block['count']) + ", info: " + str(block['info']) + ", prev_hash: " + str(block['prev_hash'])
+        block_1 = TranslateBlockInfo( DecryptBlock(i+1) )
+        hash_block = GetHashString( bdata )
+        if block_1['prev_hash'] == hash_block:
+            print("Block - " + str(block['num']) + " Correct")
+        else:
+            print("Block - " + str(block) + " not Correct")
 
 def main():
     #CreateSystemBase()
@@ -474,14 +489,30 @@ def main():
     #    "to": "generic",
     #    "type": "generic",
     #    "count": 1000000,
-    #    "info": "generic block"
+    #    "info": "generic block",
     #}
     #bdata = "num: " + str(blockdata['number']) + ", from: " + str(blockdata['from']) + ", to: " + str(blockdata['to']) + ", type: " + str(blockdata['type']) + ", count: " + str(blockdata['count']) + ", info: " + str(blockdata['info'])
     #CreateBlock(bdata) 
     #blockinfo = TranslateBlockInfo(DecryptBlock()) 
-    print(DecryptBlock(4))
+    #print(DecryptBlock(4))
     #CreateMedBase()
-    pass
+    #global point_block
+    #point_block = int(GetNumberBlock()[0][1])
+    #blockdata = {
+    #    'number': point_block,
+    #    'from': '1',
+    #    'to': '1',
+    #    'type': 'test',
+    #    'count': 1,
+    #    'info': 'Hello. I - duty.',
+    #    'prev_hash': GetHashString(str(DecryptBlock(point_block-1)))
+    #}
+    #bdata = "num: " + str(blockdata['number']) + ", from: " + str(blockdata['from']) + ", to: " + str(blockdata['to']) + ", type: " + str(blockdata['type']) + ", count: " + str(blockdata['count']) + ", info: " + str(blockdata['info']) + ", prev_hash: " + str(blockdata['prev_hash'])
+    #CreateBlock(bdata)
+    #print(DecryptBlock(point_block-1))
+    #blockinfo = TranslateBlockInfo( DecryptBlock(point_block-1) )
+    #print(blockinfo)
+    TestingBlockChain()
 
 if __name__ == "__main__":
     main()
