@@ -1,0 +1,78 @@
+*{ 
+    margin: 0;
+    padding: 0;
+}
+
+body{
+    width: 100vw;
+}
+
+.box1{
+    display: block;
+    border:5px solid rgb(60, 0, 255) ;
+    border-radius: 20px;
+    height: 100vh;
+    width: 40vw;
+    margin: 0 auto;
+    text-align: center;
+    margin-top: 15vh;
+    min-width: 360px;
+    background-color: #82ABED;}
+
+.img1{
+    float: right;
+    padding-top: 5%;
+}
+
+.h{
+    margin-top: 5%;
+}
+
+.surname{
+        margin-top: 5%;
+        width: 50%;
+        height: 5vh; 
+        border-radius:20px;
+        font-size:20px;
+        padding-left: 2%;
+        min-width:50px;
+       
+}
+
+.text{
+    display: block;
+    margin: 0 auto;
+    width: 20vw;
+    height: 25vh;
+    overflow: auto;
+    min-height: 130px;
+    font-family: 'Courier New', Courier, monospace;
+    font-size:20px;
+    overflow: auto;
+    border-radius: 20px;
+    resize: none;
+    padding: 2%;
+    min-width: 300px;
+}
+
+@media (max-width: 300px){
+    .text{
+        width:100%;
+    }
+}
+
+.box3{
+    margin-top: 3vh;
+}
+
+.button{
+    width: 25vw;
+    height: 5vh; 
+    border-radius:20px;
+    min-width: 70px;
+    font-size: 20px;
+    font-style: oblique;
+    background-color:green;
+    margin-top: 4vh;
+    min-width: 300px;
+}

@@ -178,5 +178,41 @@ def search():
                                             second_name=second_name,
                                             third_name=third_name)
 
+@app.route("/edit", methods=['post', 'get'])
+def edit():
+    message = ""
+    if request.method == "POST":
+        first_name = request.form.get("first_name")
+        second_name = request.form.get("second_name")
+        third_name = request.form.get("third_name")
+        history = request.form.get("history")
+        if len(second_name) == 0:
+            message = 'Введите фамилию пациента!'
+            return render_template("edit.html", message=message)
+        elif len(first_name) == 0:
+            message = 'Введите имя пациента!'
+            return render_template("edit.html", message=message)
+        elif len(third_name) == 0:
+            message = 'Введите отчество пациента!'
+            return render_template("edit.html", message=message)
+        elif len(history) == 0:
+            message = "Введена пустая запись!"            
+            return render_template("edit.html", message=message)
+        
+        CardInfo = GetCardInfo(None, str(first_name), str(second_name), str(third_name))
+        print("[DEBUG] " + str(CardInfo))
+        if CardInfo == False:
+            message = 'Медкарта не найдена!'
+        else:
+            CardInfo['history'] += ".\n" + str(datetime.now().strftime("%d. %m %Y")) + " .\n " + str(history)
+            history = datetime.now().strftime("%d. %m %Y") + ". \n" + history
+            UpdateHistoryMed(CardInfo['ID'], CardInfo['history'], history)
+
+        return render_template("edit.html", message=message,
+                                        first_name=first_name,
+                                        second_name=second_name,
+                                        third_name=third_name,
+                                        history=history)
+    return render_template("edit.html", message=message)
 if __name__ == "__main__":
     app.run(debug=True)

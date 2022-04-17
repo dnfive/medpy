@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/edit.css') }}">
+    <title>Document</title>
+</head>
+<body>
+    <div class="box1">
+        <img class="img1" src="{{ url_for('static', filename='img1.png') }}" alt="">
+        <h1 class="h">Добавить данные пациента</h1>
+        <br>
+        <form action="/edit" method="post">
+            <input type="text" placeholder="Фамилия пациента" value="{% if second_name %}{{ second_name }}{% endif %}" class="surname" name="second_name"> 
+            <input type="text" placeholder="Имя пациента" value="{% if first_name %}{{ first_name }}{% endif %}" class="surname" name="first_name">
+            <input type="text" placeholder="Отчество пациента" value="{% if third_name %}{{ third_name }}{% endif %}" class="surname" name="third_name">
+            <br>
+            <br>
+            {% if message %}
+            <h6>{{ message }}</h6>
+            {% endif %}
+            <div class="box3">
+                <textarea class="text" name="history">{% if history %}{{ history }}{% endif %}</textarea>
+            </div>    
+        <button class="button" type="submit">Добавить</button>
+        </form>
+
+</div>
+</body>
+</html>

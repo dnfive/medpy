@@ -213,6 +213,7 @@ def UpdateAccountInfo(id, medid=None):
 def CreateAccount(AccountInfo):
     global account_id
     global point_block
+    point_block = int(GetNumberBlock()[0][1])
     GetAccountID()
     account = (AccountInfo['name'], AccountInfo['login'], GetHashString(AccountInfo['password']), account_id, int(AccountInfo['type']), 0)
     try:
@@ -303,6 +304,8 @@ def CreateMedBase():
 def CreateMedCard(CardInfo):
     global medcard_id
     medcard_id = int(GetMedID()[0][1])
+    global point_block
+    point_block = int(GetNumberBlock()[0][1])
     card = (medcard_id,
             str(CardInfo['created_date']),
             str(CardInfo['first_name']),
@@ -338,6 +341,34 @@ def CreateMedCard(CardInfo):
         if(db_connect):
             db_connect.close()
 
+def UpdateHistoryMed(id, history, new_history):
+    global point_block
+    point_block = int(GetNumberBlock()[0][1])
+    try:
+        db_connect = sqlite3.connect(NAME_BASE)
+        cursor = db_connect.cursor()
+        news_query = '''UPDATE medcards
+                    SET history = ? 
+                    WHERE ID = ?
+        '''
+        cursor.execute(news_query, (str(history), id))
+        db_connect.commit()
+        binfo = "Med ID: " + str(id) + ". New history ivent: " + str(new_history)
+        blockdata = {
+        "number": point_block,
+        "from": str(id),
+        "to": str(id),
+        "type": "updatehistory",
+        "count": 0,
+        "info": str(binfo)
+        }
+        bdata = "num: " + str(blockdata['number']) + ", from: " + str(blockdata['from']) + ", to: " + str(blockdata['to']) + ", type: " + str(blockdata['type']) + ", count: " + str(blockdata['count']) + ", info: " + str(blockdata['info'])
+        CreateBlock(bdata)
+    except sqlite3.Error as error:
+        print("Ошибка при обновлении истории медкарты SQLite: ", error)
+    finally:
+        if (db_connect):
+            db_connect.close()  
 
 def UpdateMedID():
     global medcard_id
@@ -414,7 +445,7 @@ def GetCardInfo(id=None, first_name=None, second_name=None, third_name=None):
             print("[DEBUG] " + str(info))
             if info != None:
                 CardInfo = {
-                    'ID': id,
+                    'ID': int(info[0]),
                     'created_date': str(info[1]),
                     'first_name': str(info[2]),
                     'second_name': str(info[3]),
@@ -435,20 +466,20 @@ def GetCardInfo(id=None, first_name=None, second_name=None, third_name=None):
 def main():
     #CreateSystemBase()
     #CreateKeys()
-    global point_block
-    point_block = int(GetNumberBlock()[0][1])
-    blockdata = {
-        "number": point_block,
-        "from": "generic",
-        "to": "generic",
-        "type": "generic",
-        "count": 1000000,
-        "info": "generic block"
-    }
-    bdata = "num: " + str(blockdata['number']) + ", from: " + str(blockdata['from']) + ", to: " + str(blockdata['to']) + ", type: " + str(blockdata['type']) + ", count: " + str(blockdata['count']) + ", info: " + str(blockdata['info'])
-    CreateBlock(bdata) 
+    #global point_block
+    #point_block = int(GetNumberBlock()[0][1])
+    #blockdata = {
+    #    "number": point_block,
+    #    "from": "generic",
+    #    "to": "generic",
+    #    "type": "generic",
+    #    "count": 1000000,
+    #    "info": "generic block"
+    #}
+    #bdata = "num: " + str(blockdata['number']) + ", from: " + str(blockdata['from']) + ", to: " + str(blockdata['to']) + ", type: " + str(blockdata['type']) + ", count: " + str(blockdata['count']) + ", info: " + str(blockdata['info'])
+    #CreateBlock(bdata) 
     #blockinfo = TranslateBlockInfo(DecryptBlock()) 
-    print(DecryptBlock(0))
+    print(DecryptBlock(4))
     #CreateMedBase()
     pass
 
